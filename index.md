@@ -1,37 +1,68 @@
-## Welcome to GitHub Pages
+# xebecj
 
-You can use the [editor on GitHub](https://github.com/xebecproject/xebecproject.github.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+> A Java library for working with Xebec
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+[![Build Status](https://travis-ci.com/xebecproject/xebecj.svg?token=Pzix7aqnMuGS9c6BmBz2&branch=master)](https://travis-ci.com/xebecproject/xebecj)
 
-### Markdown
+### Welcome to xebecj
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The xebecj library is a Java implementation of the Xebec protocol, which allows it to maintain a wallet and send/receive transactions without needing a local copy of Xebec Core. It comes with full documentation and some example apps showing how to use it.
 
-```markdown
-Syntax highlighted code block
+### Technologies
 
-# Header 1
-## Header 2
-### Header 3
+* Java 6 for the core modules, Java 8 for everything else
+* [Maven 3+](http://maven.apache.org) - for building the project
+* [Google Protocol Buffers](https://github.com/google/protobuf) - for use with serialization and hardware communications
 
-- Bulleted
-- List
+### Getting started
 
-1. Numbered
-2. List
+To get started, it is best to have the latest JDK and Maven installed. The HEAD of the `master` branch contains the latest development code and various production releases are provided on feature branches.
 
-**Bold** and _Italic_ and `Code` text
+#### Building from the command line
+To initialize the repo after cloning it: 
+```
+git submodule update  --init --recursive
+```
+To perform a full build use (this includes the xebecjbls shared library):
+```
+mvn clean package
+```
+To perform a full build without building the bls shared library and skip the test:
+```
+mvn clean package -Pno-build-bls -DskipTests
+```
+To perform a full build and install it in the local maven repository:
+```
+mvn clean install
+```
+You can also run
+```
+mvn site:site
+```
+to generate a website with useful information like JavaDocs.
 
-[Link](url) and ![Image](src)
+The outputs are under the `target` directory.
+
+#### Building from an IDE
+
+Alternatively, just import the project using your IDE. [IntelliJ](http://www.jetbrains.com/idea/download/) has Maven integration built-in and has a free Community Edition. Simply use `File | Import Project` and locate the `pom.xml` in the root of the cloned project source tree.
+
+The xebecjbls library must still be built with `mvn`.
+
+### Example applications
+
+These are found in the `examples` module.
+
+#### Forwarding service
+
+This will download the block chain and eventually print a Xebec address that it has generated.
+
+If you send coins to that address, it will forward them on to the address you specified.
+
+```
+  cd examples
+  mvn exec:java -Dexec.mainClass=org.xebecj.examples.ForwardingService -Dexec.args="<insert a xebec address here>"
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/xebecproject/xebecproject.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Note that this example app *does not use checkpointing*, so the initial chain sync will be pretty slow. You can make an app that starts up and does the initial sync much faster by including a checkpoints file; see the documentation for
+more info on this technique.
